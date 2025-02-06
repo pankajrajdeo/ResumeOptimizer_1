@@ -23,6 +23,7 @@ class ResumeCrew():
         The resume PDF (self.resume_pdf) must be assigned after instantiation.
         """
         self.model = "o3-mini-2025-01-31"  # default model
+        self.resume_pdf = None
 
     @agent
     def resume_analyzer(self) -> Agent:
