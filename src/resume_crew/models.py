@@ -216,3 +216,9 @@ class CompanyResearch(BaseModel):
     interview_questions: List[str] = Field(
         description="Strategic questions to ask during the interview"
     )
+
+class InterviewQuestions(BaseModel):
+    questions: List[str] = Field(
+        description="List of interview questions synthesized from the optimized resume, job description, and company research.",
+        default_factory=list
+    )
