@@ -46,7 +46,7 @@ class ResumeCrew():
             config=self.agents_config['company_researcher'],
             verbose=True,
             tools=[SerperDevTool()],
-            llm=LLM(llm_base),
+            llm=LLM(llm),
             knowledge_sources=[self.resume_pdf]
         )
 
@@ -55,7 +55,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['resume_writer'],
             verbose=True,
-            llm=LLM(llm_base)
+            llm=LLM(llm)
         )
 
     @agent
@@ -63,7 +63,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['report_generator'],
             verbose=True,
-            llm=LLM(llm_base)
+            llm=LLM(llm)
         )
     
     @agent
