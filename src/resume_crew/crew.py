@@ -5,9 +5,12 @@ from crewai.knowledge.source.pdf_knowledge_source import PDFKnowledgeSource
 from .models import (
     JobRequirements,
     ResumeOptimization,
-    CompanyResearch
+    CompanyResearch,
+    InterviewQuestions
 )
 
+llm_base = "gpt-4o-mini-2024-07-18"
+llm_advanced = "o3-mini-2025-01-31"
 
 @CrewBase
 class ResumeCrew():
@@ -25,7 +28,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['resume_analyzer'],
             verbose=True,
-            llm=LLM("o1"),
+            llm=LLM(llm_advanced),
             knowledge_sources=[self.resume_pdf]
         )
     
@@ -35,7 +38,7 @@ class ResumeCrew():
             config=self.agents_config['job_analyzer'],
             verbose=True,
             tools=[ScrapeWebsiteTool()],
-            llm=LLM("o1")
+            llm=LLM(llm_advanced)
         )
 
     @agent
@@ -44,7 +47,7 @@ class ResumeCrew():
             config=self.agents_config['company_researcher'],
             verbose=True,
             tools=[SerperDevTool()],
-            llm=LLM("o1"),
+            llm=LLM(llm_base),
             knowledge_sources=[self.resume_pdf]
         )
 
@@ -53,7 +56,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['resume_writer'],
             verbose=True,
-            llm=LLM("o1")
+            llm=LLM(llm_base)
         )
 
     @agent
@@ -61,8 +64,17 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['report_generator'],
             verbose=True,
-            llm=LLM("o1")
+            llm=LLM(llm_base)
         )
+    
+    @agent
+    def interview_question_generator(self) -> Agent:
+        return Agent(
+            config=self.agents_config['interview_question_generator'],
+            verbose=True,
+            llm=LLM(llm_advanced)
+        )
+
 
     @task
     def analyze_job_task(self) -> Task:
@@ -101,6 +113,22 @@ class ResumeCrew():
             config=self.tasks_config['generate_report_task'],
             output_file='output/final_report.md'
         )
+
+    @task
+    def generate_interview_questions_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['generate_interview_questions_task'],
+            output_file='output/interview_questions.json',
+            output_pydantic=InterviewQuestions
+        )
+
+    @task
+    def generate_interview_questions_md_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['generate_interview_questions_md_task'],
+            output_file='output/interview_questions.md'
+        )
+
 
     @crew
     def crew(self) -> Crew:
