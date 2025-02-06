@@ -9,8 +9,6 @@ from .models import (
     InterviewQuestions
 )
 
-llm = "o3-mini-2025-01-31"
-
 @CrewBase
 class ResumeCrew():
     """ResumeCrew for resume optimization and interview preparation"""
@@ -19,15 +17,19 @@ class ResumeCrew():
     tasks_config = 'config/tasks.yaml'
 
     def __init__(self) -> None:
-        """Sample resume PDF for testing from https://www.hbs.edu/doctoral/Documents/job-market/CV_Mohan.pdf"""
-        self.resume_pdf = PDFKnowledgeSource(file_paths="CV_Mohan.pdf")
+        """
+        Initialize ResumeCrew.
+        The default model is set here and can be updated externally.
+        The resume PDF (self.resume_pdf) must be assigned after instantiation.
+        """
+        self.model = "o3-mini-2025-01-31"  # default model
 
     @agent
     def resume_analyzer(self) -> Agent:
         return Agent(
             config=self.agents_config['resume_analyzer'],
             verbose=True,
-            llm=LLM(llm),
+            llm=LLM(self.model),
             knowledge_sources=[self.resume_pdf]
         )
     
@@ -37,7 +39,7 @@ class ResumeCrew():
             config=self.agents_config['job_analyzer'],
             verbose=True,
             tools=[ScrapeWebsiteTool()],
-            llm=LLM(llm)
+            llm=LLM(self.model)
         )
 
     @agent
@@ -46,7 +48,7 @@ class ResumeCrew():
             config=self.agents_config['company_researcher'],
             verbose=True,
             tools=[SerperDevTool()],
-            llm=LLM(llm),
+            llm=LLM(self.model),
             knowledge_sources=[self.resume_pdf]
         )
 
@@ -55,7 +57,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['resume_writer'],
             verbose=True,
-            llm=LLM(llm)
+            llm=LLM(self.model)
         )
 
     @agent
@@ -63,7 +65,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['report_generator'],
             verbose=True,
-            llm=LLM(llm)
+            llm=LLM(self.model)
         )
     
     @agent
@@ -71,9 +73,8 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['interview_question_generator'],
             verbose=True,
-            llm=LLM(llm)
+            llm=LLM(self.model)
         )
-
 
     @task
     def analyze_job_task(self) -> Task:
@@ -127,7 +128,6 @@ class ResumeCrew():
             config=self.tasks_config['generate_interview_questions_md_task'],
             output_file='output/interview_questions.md'
         )
-
 
     @crew
     def crew(self) -> Crew:
