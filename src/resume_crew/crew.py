@@ -16,21 +16,21 @@ class ResumeCrew():
     agents_config = 'config/agents.yaml'
     tasks_config = 'config/tasks.yaml'
 
-    def __init__(self) -> None:
+    def __init__(self, model: str = "o3-mini-2025-01-31") -> None:
         """
-        Initialize ResumeCrew.
-        The default model is set here and can be updated externally.
+        Initialize ResumeCrew with the selected model.
         The resume PDF (self.resume_pdf) must be assigned after instantiation.
         """
-        self.model = "o3-mini-2025-01-31"  # default model
-        self.resume_pdf = None
+        self.model = model  # Use the model choice from Gradio
+        print(f"Using model: {self.model}")  # Debugging output
+        self.resume_pdf = PDFKnowledgeSource(file_paths="dummy/CV_Mohan.pdf")  # Placeholder PDF
 
     @agent
     def resume_analyzer(self) -> Agent:
         return Agent(
             config=self.agents_config['resume_analyzer'],
             verbose=True,
-            llm=LLM(self.model),
+            llm=LLM(self.model),  # This will now use the selected model
             knowledge_sources=[self.resume_pdf]
         )
     
