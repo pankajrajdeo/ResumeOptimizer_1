@@ -180,3 +180,19 @@ generate_report_task:
     actionable, clear document with concrete next steps.
   agent: report_generator
   context: [analyze_job_task, optimize_resume_task, research_company_task]
+
+generate_interview_questions_task:
+  description: >
+    Synthesize interview questions using insights from the optimized resume, job description, and company research.
+  expected_output: >
+    Structured JSON data containing a list of interview questions.
+  agent: interview_question_generator
+  context: [optimize_resume_task, analyze_job_task, research_company_task]
+
+generate_interview_questions_md_task:
+  description: >
+    Produce a Markdown-formatted document of interview questions for easy reading.
+  expected_output: >
+    A Markdown document listing the interview questions with formatting.
+  agent: interview_question_generator
+  context: [optimize_resume_task, analyze_job_task, research_company_task]
