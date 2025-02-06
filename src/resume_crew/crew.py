@@ -9,8 +9,7 @@ from .models import (
     InterviewQuestions
 )
 
-llm_base = "gpt-4o-mini-2024-07-18"
-llm_advanced = "o3-mini-2025-01-31"
+llm = "o3-mini-2025-01-31"
 
 @CrewBase
 class ResumeCrew():
@@ -28,7 +27,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['resume_analyzer'],
             verbose=True,
-            llm=LLM(llm_advanced),
+            llm=LLM(llm),
             knowledge_sources=[self.resume_pdf]
         )
     
@@ -38,7 +37,7 @@ class ResumeCrew():
             config=self.agents_config['job_analyzer'],
             verbose=True,
             tools=[ScrapeWebsiteTool()],
-            llm=LLM(llm_advanced)
+            llm=LLM(llm)
         )
 
     @agent
@@ -72,7 +71,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['interview_question_generator'],
             verbose=True,
-            llm=LLM(llm_advanced)
+            llm=LLM(llm)
         )
 
 
