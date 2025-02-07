@@ -16,21 +16,21 @@ class ResumeCrew():
     agents_config = 'config/agents.yaml'
     tasks_config = 'config/tasks.yaml'
 
-    def __init__(self, model: str = "o3-mini-2025-01-31") -> None:
+    def __init__(self, model: str, openai_api_key: str, serper_api_key: str, resume_pdf_path: str) -> None:
         """
-        Initialize ResumeCrew with the selected model.
-        The resume PDF (self.resume_pdf) must be assigned after instantiation.
+        Initialize ResumeCrew with the selected model and user-provided API keys.
         """
-        self.model = model  # Use the model choice from Gradio
-        print(f"Using model: {self.model}")  # Debugging output
-        self.resume_pdf = PDFKnowledgeSource(file_paths="dummy/CV_Mohan.pdf")  # Placeholder PDF
+        self.model = model  
+        self.openai_api_key = openai_api_key  # Store user-provided OpenAI API Key
+        self.serper_api_key = serper_api_key  # Store user-provided Serper API Key
+        self.resume_pdf = PDFKnowledgeSource(file_paths=[resume_pdf_path])  # Use user-uploaded resume
 
     @agent
     def resume_analyzer(self) -> Agent:
         return Agent(
             config=self.agents_config['resume_analyzer'],
             verbose=True,
-            llm=LLM(self.model),  # This will now use the selected model
+            llm=LLM(self.model, api_key=self.openai_api_key),  # Use user-provided OpenAI API Key
             knowledge_sources=[self.resume_pdf]
         )
     
@@ -40,7 +40,7 @@ class ResumeCrew():
             config=self.agents_config['job_analyzer'],
             verbose=True,
             tools=[ScrapeWebsiteTool()],
-            llm=LLM(self.model)
+            llm=LLM(self.model, api_key=self.openai_api_key)  # Use dynamic API key
         )
 
     @agent
@@ -48,8 +48,8 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['company_researcher'],
             verbose=True,
-            tools=[SerperDevTool()],
-            llm=LLM(self.model),
+            tools=[SerperDevTool(api_key=self.serper_api_key)],  # Use user-provided Serper API Key
+            llm=LLM(self.model, api_key=self.openai_api_key),  # Use dynamic API key
             knowledge_sources=[self.resume_pdf]
         )
 
@@ -58,7 +58,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['resume_writer'],
             verbose=True,
-            llm=LLM(self.model)
+            llm=LLM(self.model, api_key=self.openai_api_key)
         )
 
     @agent
@@ -66,7 +66,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['report_generator'],
             verbose=True,
-            llm=LLM(self.model)
+            llm=LLM(self.model, api_key=self.openai_api_key)
         )
     
     @agent
@@ -74,7 +74,7 @@ class ResumeCrew():
         return Agent(
             config=self.agents_config['interview_question_generator'],
             verbose=True,
-            llm=LLM(self.model)
+            llm=LLM(self.model, api_key=self.openai_api_key)
         )
 
     @task
