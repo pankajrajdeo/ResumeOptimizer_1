@@ -92,5 +92,31 @@ with gr.Blocks(css=".output-column { width: 700px; }") as demo:
             company_name_text = gr.Textbox(label="Company Name")
             job_url_text = gr.Textbox(label="Job URL")
             run_button = gr.Button("Run")
+            
+# Define output components
+result_text = gr.Textbox(label="Status", interactive=False)
+pdf_opt_out = gr.File(label="Optimized Resume PDF")
+pdf_final_out = gr.File(label="Final Report PDF")
+pdf_int_out = gr.File(label="Interview Questions PDF")
+
+# Connect the run button to the process_resume function:
+run_button.click(
+    process_resume, 
+    inputs=[
+        model_dropdown, 
+        new_resume_file, 
+        company_name_text, 
+        job_url_text, 
+        openai_api_key_input, 
+        serper_api_key_input
+    ],
+    outputs=[
+        result_text, 
+        pdf_opt_out, pdf_opt_out,  # (if you want to show the same file twice, otherwise remove duplicate)
+        pdf_final_out, pdf_final_out,
+        pdf_int_out, pdf_int_out
+    ]
+)
+
 
 demo.launch()
