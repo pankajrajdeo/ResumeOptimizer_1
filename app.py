@@ -1,12 +1,8 @@
 import os
-import shutil
 import datetime
-import json
 import gradio as gr
 from markdown_pdf import MarkdownPdf, Section
-from gradio_pdf import PDF
 from resume_crew.crew import ResumeCrew
-from crewai.knowledge.source.pdf_knowledge_source import PDFKnowledgeSource
 
 # Set backend directories for Hugging Face Spaces
 UPLOAD_DIR = "/tmp/uploads"
