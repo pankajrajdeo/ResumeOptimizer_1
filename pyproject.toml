@@ -1,7 +1,7 @@
 [project]
 name = "resume_crew"
 version = "0.1.0"
-description = "resume-crew using crewAI"
+description = "Resume optimization using CrewAI"
 authors = [{ name = "Your Name", email = "you@example.com" }]
 requires-python = ">=3.10,<3.13"
 dependencies = [
@@ -22,6 +22,12 @@ test = "resume_crew.main:test"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.setuptools]
+packages = ["resume_crew"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/resume_crew"]
 
 [tool.crewai]
 type = "crew"
